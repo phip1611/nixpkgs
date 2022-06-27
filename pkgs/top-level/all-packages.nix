@@ -20510,6 +20510,17 @@ with pkgs;
   qt5 =        if stdenv.hostPlatform.isDarwin then qt514 else qt515;
   libsForQt5 = if stdenv.hostPlatform.isDarwin then libsForQt514 else libsForQt515;
 
+  # TODO: remove once no package needs this anymore
+  qt5_openssl_1_1 = qt5.overrideScope' (_: super: {
+    qtbase = super.qtbase.override {
+      openssl = openssl_1_1;
+      libmysqlclient = libmysqlclient.override {
+        openssl = openssl_1_1;
+        curl = curl.override { openssl = openssl_1_1; };
+      };
+    };
+  });
+
   # plasma5Packages maps to the Qt5 packages set that is used to build the plasma5 desktop
   plasma5Packages = libsForQt515;
 
