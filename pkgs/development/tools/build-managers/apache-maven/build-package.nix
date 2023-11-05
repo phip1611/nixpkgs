@@ -40,7 +40,8 @@ let
         mvn dependency:get -Dartifact="$artifactId" -Dmaven.repo.local=$out/.m2
       done
     '' + lib.optionalString (!buildOffline) ''
-      mvn package -Dmaven.repo.local=$out/.m2 ${mvnParameters}
+      # Don't run tests here. They should be executed in the actual derivation.
+      mvn -Dmaven.test.skip package -Dmaven.repo.local=$out/.m2 ${mvnParameters}
     '' + ''
       runHook postBuild
     '';
@@ -72,6 +73,7 @@ stdenv.mkDerivation (builtins.removeAttrs args [ "mvnFetchExtraArgs" ] // {
     maven
   ];
 
+  # Build project and execute tests.
   buildPhase = ''
     runHook preBuild
 
